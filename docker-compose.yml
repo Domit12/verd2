@@ -1,0 +1,34 @@
+version: '3.1'
+
+services:
+  verdaccio:
+    build: .
+    image: verdaccio/verdaccio
+    container_name: "verdaccio"
+    networks:
+      - node-network
+    environment:
+      - VERDACCIO_PORT=4873
+    ports:
+      - "4873:4873"
+    volumes:
+      - ./storage:/home/tori/Documents/project/storage
+      - ./config:/home/tori/Documents/project/config
+      - ./plugins:/verdaccio/plugins
+      - ./logs:/verdaccio/logs
+  node:
+    image: "node:8"
+    user: "node"
+    working_dir: /home/tori/Documents/project
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./:/home/tori/Documents/project
+    expose:
+      - "8081"
+    ports: 
+      - "8001:8001"
+    command: ['tail', '-f', '/dev/null']
+networks:
+  node-network:
+    driver: bridge
